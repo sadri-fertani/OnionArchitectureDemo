@@ -1,0 +1,307 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model CNESST.AppWebDem.Controllers.HomeViewmodel
+
+    <div class="text-center">
+        <p>
+            @if (Model!.Token != null)
+            {
+                <a href="#" onclick="GetProducts();" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Load products</a>
+            }
+            else
+            {
+                <a href="#" class="btn btn-primary btn-lg disabled" role="button" aria-pressed="true" aria-disabled="true">Load products</a>
+            }
+        </p>
+
+        <div id="okta-login-container"></div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody id="body_table">
+            </tbody>
+        </table>
+
+    </div>
+
+<script type="text/javascript">
+    //var config = {
+    //    issuer: 'https://dev-768069.okta.com/oauth2/default',
+    //    clientId: '0oabwneu0bjFva9wv4x6',
+    //    clientSecret: 'MN_F0eUeqOcJIK1g9mLaPKGsvdBFfKqUslzkquh6',
+    //    redirectUri: 'https://localhost:44314', //window.location.origin,
+    //    responseType: ['token', 'id_token'],
+    //    response_mode: 'fragment',
+    //    tokenManager: {
+    //        storage: 'localStorage'
+    //    }
+    //};
+
+    //function Connect() {
+    //    console.log('-- Begin Connect --')
+
+    //    var authClient = new OktaAuth(config);
+    //    console.log(authClient);
+
+
+
+
+
+
+
+
+
+
+    //    // Attempt to retrieve ID Token from Token Manager
+    //    var idToken = authClient.tokenManager.get('idToken')
+    //        .then(idToken => {
+    //            // If ID Token exists, output it to the console
+    //            if (idToken) {
+    //                console.log(`hi ${idToken.claims.email}!`);
+    //                // If ID Token isn't found, try to parse it from the current URL
+    //            } else if (location.hash) {
+    //                authClient.token.parseFromUrl()
+    //                    .then(idToken => {
+    //                        console.log(`hi ${idToken.claims.email}!`);
+    //                        // Store parsed token in Token Manager
+    //                        authClient.tokenManager.add('idToken', idToken);
+    //                        console.log(idToken);
+    //                    });
+    //            } else {
+    //                // You're not logged in, you need a sessionToken
+    //                var username = prompt('What is your username?');
+    //                var password = prompt('What is your password?');
+
+    //                authClient.signIn({ username, password })
+    //                    .then(res => {
+    //                        if (res.status === 'SUCCESS') {
+    //                            debugger;
+    //                            authClient.token.getWithRedirect({
+    //                                sessionToken: res.sessionToken,
+    //                                responseType: ['token', 'id_token'],
+    //                                response_mode: 'fragment',
+    //                            });
+
+    //                            authClient.token.parseFromUrl()
+    //                                .then(function (res) {
+    //                                    debugger;
+    //                                    var state = res.state; // passed to getWithRedirect(), can be any string
+
+    //                                    // manage token or tokens
+    //                                    var tokens = res.tokens;
+
+    //                                    // Do something with tokens, such as
+    //                                    authClient.tokenManager.add('idToken', tokens.idToken);
+    //                                    authClient.tokenManager.add('accessToken', tokens.accesstoken);
+    //                                })
+    //                                .catch(function (err) {
+    //                                    console.error(err);
+    //                                });
+
+    //                        }
+    //                    });
+    //            }
+    //        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //    //var oktaSignIn = new OktaSignIn({
+    //    //    baseUrl: 'https://dev-768069.okta.com',
+    //    //    clientId: '0oabwneu0bjFva9wv4x6',
+    //    //    redirectUri: 'https://localhost:44314',
+    //    //    authParams: {
+    //    //        issuer: 'https://dev-768069.okta.com/oauth2/default',
+    //    //        responseType: 'id_token',
+    //    //        display: 'page'
+    //    //    }
+    //    //});
+    //    //if (oktaSignIn.hasTokensInUrl()) {
+    //    //    console.log('AAAAAAAAAAAAAAAA1');
+    //    //    debugger;
+    //    //    oktaSignIn.authClient.token.parseFromUrl().then(function success(tokens) {
+    //    //        console.log('AAAAAAAAAAAAAAAA2');
+    //    //        debugger;
+    //    //        // tokens is or is not an array based on the scopes involved
+    //    //        tokens = Array.isArray(tokens) ? tokens : [tokens];
+
+    //    //        // Save the tokens for later use, for example if the page gets refreshed:
+    //    //        // Add the token to tokenManager to automatically renew the token when needed
+    //    //        tokens.forEach(function (token) {
+    //    //            debugger;
+    //    //            console.log('************');
+    //    //            console.log(token);
+    //    //            console.log('************');
+
+    //    //            if (token.idToken) {
+    //    //                oktaSignIn.authClient.tokenManager.add('idToken', token);
+    //    //            }
+    //    //            if (token.accessToken) {
+    //    //                oktaSignIn.authClient.tokenManager.add('accessToken', token);
+    //    //            }
+    //    //        });
+
+    //    //        // Say hello to the person who just signed in:
+    //    //        oktaSignIn.authClient.tokenManager.get('idToken').then(function (idToken) {
+    //    //            debugger;
+    //    //            console.log('Hello, ' + idToken.claims.email);
+    //    //        });
+    //    //    },
+    //    //        function error(err) {
+    //    //            // handle errors as needed
+    //    //            console.error(err);
+    //    //        }
+    //    //    );
+    //    //} else {
+
+    //    //    console.log('BBBBBB1');
+    //    //    debugger;
+
+    //    //    oktaSignIn.authClient.session.get().then(function (res) {
+    //    //        console.log('BBBBBB1');
+    //    //        debugger;
+
+    //    //        // Session exists, show logged in state.
+    //    //        if (res.status === 'ACTIVE') {
+    //    //            console.log('Welcome back, ' + res.login);
+
+    //    //            console.log('...............');
+    //    //            console.log(res);
+    //    //            console.log('...............');
+
+    //    //            return;
+    //    //        }
+    //    //        // No session, show the login form
+    //    //        oktaSignIn.renderEl(
+    //    //            { el: '#okta-login-container' },
+    //    //            function success(res) {
+    //    //                // Nothing to do in this case, the widget will automatically redirect
+    //    //                // the user to Okta for authentication, then back to this page if successful
+    //    //            },
+    //    //            function error(err) {
+    //    //                // handle errors as needed
+    //    //                console.error(err);
+    //    //            }
+    //    //        );
+    //    //    });
+    //    //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //    //authClient.token.getWithPopup(options)
+    //    //    .then(function (res) {
+    //    //        var tokens = res.tokens;
+
+    //    //        // Do something with tokens, such as
+    //    //        authClient.tokenManager.add('idToken', tokens.idToken);
+    //    //    })
+    //    //    .catch(function (err) {
+    //    //        // handle OAuthError
+    //    //    });
+
+    //    //authClient.token.getWithoutPrompt({
+    //    //    responseType: ['id_token', 'token'], // or array of types
+    //    //    //sessionToken: 'testSessionToken' // optional if the user has an existing Okta session
+    //    //})
+    //    //    .then(function (res) {
+    //    //        console.log('........');
+    //    //        console.log(res);
+    //    //        console.log('........');
+
+    //    //        var tokens = res.tokens;
+
+    //    //        // Do something with tokens, such as
+    //    //        authClient.tokenManager.add('idToken', tokens.idToken);
+    //    //    })
+    //    //    .catch(function (err) {
+    //    //        // handle OAuthError
+    //    //        console.error('........');
+    //    //        console.error(err);
+    //    //        console.error('........');
+    //    //    });
+
+
+
+
+
+
+
+    //    //authClient.signIn({
+    //    //    username: 'cedric_sf@hotmail.com',
+    //    //    password: 'maHANEN1234567890'
+    //    //})
+    //    //    .then(function (transaction) {
+    //    //        if (transaction.status === 'SUCCESS') {
+    //    //            //authClient.session.setCookieAndRedirect(transaction.sessionToken); // Sets a cookie on redirect
+    //    //        } else {
+    //    //            throw 'We cannot handle the ' + transaction.status + ' status';
+    //    //        }
+    //    //    })
+    //    //    .catch(function (err) {
+    //    //        console.error(err);
+    //    //    });
+
+    //    console.log('-- End Connect --')
+    //}
+    function GetProducts() {
+        console.log('-- Begin GetProducts --');
+
+        $.ajax({
+            url: 'https://localhost:44342/api/product/test',
+            type: 'POST',
+            headers: {
+                Authorization: 'Bearer @Model.Token'
+            },
+            success: function (data) {
+                console.log('--------------');
+                console.log(data);
+                console.log('--------------');
+
+                $.each(data, function (i, item) {
+                    var $tr = $('<tr>').append(
+                        $('<th scope="row">').text(item.id),
+                        $('<td>').text(item.productName),
+                        $('<td>').text(item.productDetails.price + ' $')
+                    );
+                    $tr.appendTo('#body_table');
+                });
+
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error('+++++++++++');
+                console.error(jqXHR.responseText || textStatus);
+                console.error('+++++++++++');
+            }
+        });
+
+        console.log('-- End GetProducts --');
+    }
+</script>
